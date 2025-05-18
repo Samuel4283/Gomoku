@@ -4,6 +4,8 @@ from gym import spaces
 
 """ 建立環境 """
 class GomokuEnv(gym.Env):
+
+    # 初始化 棋盤大小 預設15x15 獲勝條件的長度5
     def __init__(self, board_size=15, win_length=5):
         super(GomokuEnv, self).__init__()
         self.board_size = board_size
