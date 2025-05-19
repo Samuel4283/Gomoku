@@ -30,13 +30,13 @@ class GomokuEnv(gym.Env):
         self.board[row, col] = self.current_player
 
         # 判斷勝負
-        done, win = self.check_win(row, col)
+        done, win = self.check_win(row, col)        
 
         # 給分
         if done:
             reward = 1 if win else 0
         else:
-            reward = 0
+            reward = self.reward
 
         # 換對手（簡單 rule-based 隨機對手）
         if not done:
@@ -51,6 +51,7 @@ class GomokuEnv(gym.Env):
         """檢查是否五子連線"""
         player = self.board[row, col]
         directions = [(1, 0), (0, 1), (1, 1), (1, -1)]
+        max_count = 1
 
         for dr, dc in directions:
             count = 1
@@ -63,8 +64,18 @@ class GomokuEnv(gym.Env):
                         count += 1
                     else:
                         break
+            max_count = max(max_count, count)
             if count >= self.win_length:
+                self.reward = 1
                 return True, True  # 遊戲結束，有人獲勝
+            
+        if count == self.win_length-1:
+            self.reward = 0.2
+
+        elif count == self.win_length-2:
+            self.reward = 0.1
+        else:
+            self.reward = 0
 
         if np.all(self.board != 0):
             return True, False  # 平手
